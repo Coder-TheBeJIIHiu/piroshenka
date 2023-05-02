@@ -1,10 +1,10 @@
 const MysqlDb = require("./db.control.js")
 
 const db = new MysqlDb({
-  host: 'srv1.dercrafter.de',
-  user: 'TheBeJIIHiu',
-  password: '!!!MjoZanv8RY!Sc',
-  database: 'TheBeJIIHiu_piroshenka'
+  host: process.env.HOST,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE
 });
 
 module.exports = db;
