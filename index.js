@@ -10,23 +10,26 @@ const middleware = new LoadMiddlewares(bot, session);
 const context = new ContextManager(bot);
 const app = express()
 
+app.get('/', async (req, res) => {
+	const msgs = await updateMessages();
+	res.json(msgs)
+})
+
 middleware.load().then(async () => {
-    console.log('Бот запущен!')
-    await context.load()
-    await bot.launch();
-    await updateMessages();
-    app.listen(3000)
+	console.log('Бот запущен!')
+	await context.load()
+	app.listen(3000)
+	await bot.launch();
 });
 
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function updateMessages() {
-    while (true) {
-      const messages = await db.execute(`SELECT * FROM messages`);
-      console.log(messages);
-      await sleep(2000);
-    }
-  }
-  
+	while (true) {
+		await sleep(5000);
+		const messages = await db.execute(`SELECT * FROM messages`);
+		return messages
+	}
+}

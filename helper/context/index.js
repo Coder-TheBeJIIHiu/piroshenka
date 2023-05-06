@@ -1,4 +1,4 @@
-const { startBasic, topCommand } = require('./basic.js')
+const { startBasic, activateCommand, joinEvent, kickEvent } = require('./basic.js')
 const { startMajor } = require('./onMessage.js')
 
 class ContextManager {
@@ -9,7 +9,9 @@ class ContextManager {
     async load() {
         try {
             await startBasic(this.bot)
-            //await topCommand(this.bot)
+            await activateCommand(this.bot)
+            await joinEvent(this.bot)
+            await kickEvent(this.bot)
             await startMajor(this.bot)
         } catch (err) {
             console.error(err)

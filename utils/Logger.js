@@ -12,14 +12,6 @@ class Logger {
             winston.format.simple()
           ),
         }),
-        new winston.transports.File({
-          filename: './log/latest.json', // Путь к файлу для сохранения логов
-          level: 'info', // Уровень логирования для вывода в файл
-          format: winston.format.combine(
-            winston.format.timestamp(),
-            winston.format.json()
-          ),
-        }),
       ],
     });
   }

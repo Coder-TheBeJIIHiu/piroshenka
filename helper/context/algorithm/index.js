@@ -23,7 +23,7 @@ const getMessage = async (ctx) => {
 const sendMessage = async (ctx, row) => {
   	try {
     	ctx.reply(`${row?.message}\n\nНажми '♥️' чтобы покормить алгоритм знаньями.`, Markup.inlineKeyboard([
-      		Markup.button.callback(`♥️ - ${row?.Like}`, `Like_${row?.uuid}_${ctx.message?.text}`),
+      		Markup.button.callback(`♥️ - ${row?.Like}`, `Like_${row?.uuid}`),
     	]));
   	} catch (err) {
     	console.error(err);
@@ -36,10 +36,9 @@ const saveMessage = async (ctx, messageText) => {
     	const generatedUuid = generateUUID(messageText);
     	const row = await db.execute(`SELECT * FROM messages WHERE uuid = ?`, [generatedUuid]);
 		const userInfo = await db.execute(`SELECT * FROM users WHERE telegram_id = ?`, [ctx.message?.from?.id])
-		const rows = await db.execute(`SELECT * FROM messages WHERE \`Like\` = (SELECT MAX(\`Like\`) FROM messages) LIMIT 10`);
+		const rows = await db.execute(`SELECT * FROM messages`);
 		const randomRow = rows[crypto.randomInt(rows.length)]
     	if (row.length === 0) {
-			await ctx.reply(`😕 :: Это что новое для меня, сохраняю...`);
       		await db.execute(`INSERT INTO messages (message, uuid, first_user_uuid, created_at) VALUES (?, ?, ?, ?)`, [messageText, generatedUuid, userInfo[0].uuid, Date.now()]);
       		await sendMessage(ctx, randomRow);
     	} else {
