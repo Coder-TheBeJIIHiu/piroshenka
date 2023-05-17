@@ -21,17 +21,20 @@ const startMajor = async (bot) => {
   });
 
   bot.on('callback_query', async (ctx) => {
-    const action = ctx.update.callback_query?.data?.split('_');
-    const row = await db.execute('SELECT * FROM messages WHERE uuid = ?;', [action[1]]);
-    if (row.length === 0) return;
-    await db.execute(`UPDATE messages SET \`Like\` = ? WHERE uuid = ?;`, [row[0].Like + 1, row[0].uuid]);
-    const aliases = JSON.parse(row[0].aliases);
-    if (!aliases.includes(ctx.update.callback_query.message.text)) {
-        aliases.push(ctx.update.callback_query.message.text);
-        await db.execute(`UPDATE messages SET aliases = ? WHERE uuid = ?`, [JSON.stringify(aliases), row[0].uuid]);
-    }
-    await ctx.replyWithHTML(`✅ :: <a href="tg://user?id=${ctx.update.callback_query.from.id}">${ctx.update.callback_query.from.first_name}</a>, Спасибо за поддержку!`);
-  });
+  	const action = ctx.update.callback_query?.data?.split('_');
+  	const row = await db.execute('SELECT * FROM messages WHERE id = ?;', [action[1]]);
+  	if (row.length === 0) return;
+  	await db.execute(`UPDATE messages SET \`Like\` = ? WHERE uuid = ?;`, [row[0].Like + 1, row[0].uuid]);
+		
+		if (action[2] === undefined) action[2] = ``;
+  	const aliases = JSON.parse(row[0].aliases);
+  	if (!aliases.includes(action[2])) {
+    	aliases.push(action[2]);
+    	await db.execute(`UPDATE messages SET aliases = ? WHERE uuid = ?`, [JSON.stringify(aliases), row[0].uuid]);
+  	}
+  	await ctx.editMessageText(ctx.update.callback_query.message.text.replace(`Нажми '♥️' чтобы покормить алгоритм знаньями.`, `✅ :: <a href="tg://user?id=${ctx.update.callback_query.from.id}">${ctx.update.callback_query.from.first_name}</a>, Спасибо за поддержку!`), { parse_mode: 'HTML', reply_markup: { inline_keyboard: [] } });
+	});
+
 };
 
 module.exports = {
